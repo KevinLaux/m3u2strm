@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  m3u2strm:
+    build: .
+    container_name: m3u2strm
+    environment:
+      # Set your M3U playlist URL here
+      - urlm3u=${M3U_URL}
+    volumes:
+      # Mount your media directory here
+      - ${MEDIA_PATH}:/media
+      # Optional: Mount logs directory for external access
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "test", "-f", "/app/logs/process.log"]
+      interval: 30m
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+# Example usage:
+# 1. Create a .env file with:
+#    M3U_URL=http://example.com/playlist.m3u
+#    MEDIA_PATH=/path/to/your/media
+# 2. Run: docker-compose up -d
